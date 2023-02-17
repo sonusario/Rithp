@@ -8,7 +8,7 @@ fn main() {
 }
 
 fn repl() {
-    let mut env: Env = Env::new();
+    let mut env: Expr = Expr::env();
     loop {
         let result: Result<(), RithpErr> = read(&mut env).and_then(eval).and_then(prnt);
 
@@ -23,13 +23,13 @@ fn prnt(text: String) -> Result<(), RithpErr> {
     Ok(())
 }
 
-fn eval(env_tok: (&mut Env, Vec<String>)) -> Result<String, RithpErr> {
+fn eval(env_tok: (&mut Expr, Vec<String>)) -> Result<String, RithpErr> {
     let mut result = String::new();
 
     Ok(result)
 }
 
-fn read(envr: &mut Env) -> Result<(&mut Env, Vec<String>), RithpErr> {
+fn read(envr: &mut Expr) -> Result<(&mut Expr, Vec<String>), RithpErr> {
     prompt(">>> ");
     let tokens: Vec<String> = scan()
         .replace('(', " ( ")
@@ -71,42 +71,46 @@ fn scan() -> String {
     input
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Expr {
     Atom(Atom),
     List(Vec<Expr>),
+    Emap(HashMap<String, fn(Vec<Expr>) -> Result<Expr, RithpErr>>)
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Atom {
     Symbol(String),
     Number(Number),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum Number {
     Int(i32),
     Float(f64),
 }
 
-struct Env {
-    lut: HashMap<String, fn(Vec<Expr>) -> Result<Expr, RithpErr>>,
-}
-
-impl Env {
-    fn new() -> Env {
-        Env {
-            lut: HashMap::from([
-                //("define".to_string(), Op::define())
-                ("+".to_string(), Op::add()),
-            ]),
-        }
+impl Expr {
+    fn env() -> Expr {
+        Expr::Emap(HashMap::from([
+            //("define".to_string(), Op::define())
+            ("+".to_string(), Op::add()),
+        ]))
     }
 }
 
 enum Op {}
 
 impl Op {
+    fn define() -> fn(&[Expr]) -> Result<Expr, RithpErr> {
+        |vexpr: &[Expr]| -> Result<Expr, RithpErr> {
+            match &vexpr {
+                [first, rest @ ..] => {Ok(Expr::List(vec![first.clone()]))}
+                [all @ ..] => Err(RithpErr::EmtpyDefine)
+            }
+        }
+    }
+
     fn add() -> fn(Vec<Expr>) -> Result<Expr, RithpErr> {
         |vexpr: Vec<Expr>| -> Result<Expr, RithpErr> {
             let mut sum: f64 = 0.0;
@@ -136,6 +140,7 @@ enum RithpErr {
     UnexpectedParen,
     UnexpectedEOF,
     OpAdd(Expr),
+    EmtpyDefine,
 }
 
 impl RithpErr {
@@ -151,6 +156,7 @@ impl RithpErr {
                     expr
                 )
             }
+            Self::EmtpyDefine => {}
         }
     }
 }
