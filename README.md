@@ -1,5 +1,5 @@
 # Rithp
-## A Rust made LiTHp
+## A Rust made LiTHp (Currently not runnable!!!)
 
 I'm just messing around with ideas for a Lisp interpreter.
 
