@@ -54,9 +54,8 @@ name::                    // a reference to var/function "name"
 name:type:value // e.g. x:i32:-3
 
 // Define variable reference "q" with bounded type
-(define (q:Number;3<&<12:)
- ((q) 5) //given q, yield 5; put 13 in place of 5 would "throw" an error as q is bounded between 3 and 12
-)
+(define mut q:Number;4..=11:5) //given q, yield 5
+(into q 12) // (:Err: Cannot assign 12 into q as q is a Number bounded from 4 up to and including 11
 
 (+ 3 (q)) // -> (+ 3 5) => 8
 
@@ -80,9 +79,14 @@ name:type:value // e.g. x:i32:-3
 )
 
 // Define using lambda
-(define (factorial:Number->Number:)
- ((factorial _))
-)
+// Skip the combinator: Lambdas in Rithp could perform recursion using
+//     "->" and can be labeled for nesting via "label->"
+// Obviously if you a generating a function variable with a lambda you can
+//     just use the variable name
+(define factorial:Number->Number:(lambda (fac-> n:Number;>=0:)
+ ((fac-> ::0) 1)
+ (else (* n (fac-> (- n 1))))
+))
 
 
 //Could also be used for type conversion
