@@ -68,11 +68,11 @@ name:type:value // e.g. x:i32:-3
 // most cases could be avoided my specifying x's type, but are shown for demonstrative purpose
 (define (!-m*:: x::)                                                          // call format then implicit cond
  ((!-m* ()) 0)                                                                // where x is an empty list, yield 0: a terminating case
- ((!-m* (first:Number:)) first::)                                             // where x is a one item list, yield that item if it is not a list: a terminating case
+ ((!-m* (first:Number:)) first)                                               // where x is a one item list, yield that item if it is not a list: a terminating case
  ((!-m* (::0 rest::)) 0)                                                      // where x is a list and the first item is 0, yield 0: a terminating case
- ((!-m* (first:List: rest::)) (m* (((lambda (-> y) ((-> (lst::)) lst::)) first::) rest::)) // flatten first: a recursive case
- ((!-m* (first:: second:List: rest::)) (m* (first:: ((lambda (-> y) ((-> (lst::)) lst::)) second::) rest::)) // flatten second: a recursive case
- ((!-m* (first:: second:: rest::) (m* (* first:: second::) rest::)) //multiply first and second, then repeat: a recursive case
+ ((!-m* (first:List: rest::)) (m* (((lambda (-> y) ((-> (lst::)) lst)) first) rest)) // flatten first: a recursive case
+ ((!-m* (first:: second:List: rest::)) (m* (first ((lambda (-> y) ((-> (lst::)) lst)) second) rest)) // flatten second: a recursive case
+ ((!-m* (first:: second:: rest::) (m* (* first second) rest)) //multiply first and second, then repeat: a recursive case
  ((!-m* :!Number:) (:Err: Not a number))                                      // return error type where x is not a number
  ((!-m* x) (m* (x))                                                           // restructure into a list where item(s) after "m*" is(are) not collectively in a list: a recursive case
 )
