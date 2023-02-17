@@ -30,11 +30,13 @@ Example expressions and their results if the interpreter follows my internal spe
 ```
 
 ## Core ideas involve:
-1. Using "()" for quote/quasiquote: only quotes the immediate list, sub-lists are unquoted
+1. Using "()" for quote/quasi-quote: only quotes the immediate list, sub-lists are unquoted
 1. Using numbers as operators: No real reason, just seemed cool on first thought
+1. Using "_" as a don't care value
 1. Including errors as part of the environment map
 1. List destructuring, eliminating atom, first/car, rest/cdr, cons, and if/cond functions
-1. Implicit maping in some cases
+1. Implicit mapping in some cases
+1. Reversible functions, which query in the case of a one to many output mapping 
 1. etc.?
 
 ---
@@ -76,6 +78,12 @@ name:type:value // e.g. x:i32:-3
  ((!-m* :!Number:) (:Err: Not a number))                                      // return error type where x is not a number
  ((!-m* x) (m* (x))                                                           // restructure into a list where item(s) after "m*" is(are) not collectively in a list: a recursive case
 )
+
+// Define using lambda
+(define (factorial:Number->Number:)
+ ((factorial _))
+)
+
 
 //Could also be used for type conversion
 (define (:u32: x:Number;>=0:))
