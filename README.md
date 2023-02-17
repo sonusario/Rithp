@@ -5,28 +5,28 @@ I'm just messing around with ideas for a Lisp interpreter.
 
 Example expressions and their results if the interpreter follows my internal spec. The "->" indicates an intermediate step while "=>" indicates a final step.
 ```
-() => ()
-(()) => ()
-(() 1 2 3) => (1 2 3)
-(+ 1 2 3) => 6
+() // => ()
+(()) // => ()
+(() 1 2 3) // => (1 2 3)
+(+ 1 2 3) // => 6
 
-(2 3 (+ 4 5)) -> (2 3 9) => 3 9 3 9
+(2 3 (+ 4 5)) // -> (2 3 9) => 3 9 3 9
 
-(() 2 3 (+ 4 5)) -> (() 2 3 9) => (2 3 9)
+(() 2 3 (+ 4 5)) // -> (() 2 3 9) => (2 3 9)
 
-(+ 2 3 (+ 4 5)) -> (+ 2 3 9) => 14
+(+ 2 3 (+ 4 5)) // -> (+ 2 3 9) => 14
 
-(+ 2 3 (4 5)) -> (+ 2 3 5 5 5 5) => 25
+(+ 2 3 (4 5)) // -> (+ 2 3 5 5 5 5) => 25
 
-(+ 2 3 (() 4 5)) -> (+ 2 3 (4 5)) => (9 10)
+(+ 2 3 (() 4 5)) // -> (+ 2 3 (4 5)) => (9 10)
 
-(* 2 3) => 6
+(* 2 3) // => 6
 
-(* 3 2) => 6
+(* 3 2) // => 6
 
-(* (3 2)) -> (* 2 2 2) => 8
+(* (3 2)) // -> (* 2 2 2) => 8
 
-(* (2 3)) -> (* 3 3) => 9
+(* (2 3)) // -> (* 3 3) => 9
 ```
 
 ## Core ideas involve:
@@ -52,7 +52,11 @@ name::                    // a reference to var/function "name"
 name:type:value // e.g. x:i32:-3
 
 // Define variable reference "q" with bounded type
-(define (q::))
+(define (q:Number;3<&<12:)
+ ((q) 5) //given q, yield 5; put 13 in place of 5 would "throw" an error as q is bounded between 3 and 12
+)
+
+(+ 3 (q)) // -> (+ 3 5) => 8
 
 // Define function reference "abs" returning bounded number type
 (define (abs:Number->Number;>=0: x:Number:)
